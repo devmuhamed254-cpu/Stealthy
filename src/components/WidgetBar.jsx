@@ -63,7 +63,7 @@ function WidgetBar({ onStart, onStop, isListening, isActive }) {
       {/* Right: Settings */}
       <div className="flex items-center gap-1">
         <button
-          onClick={toggleSettingsPanel}
+          onClick={handleSettingsClick}
           className="p-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition-all"
           title="Settings"
         >

@@ -13,7 +13,7 @@ const EXPANDED_H = 620;
 const WIDGET_W = 560;
 
 function App() {
-  const { settings, interview, transcription, startInterview, stopInterview, setTranscription, addDetectedQuestion, addTranscriptEntry, setResponses, setIsGenerating, setResponseError, toggleSettingsPanel, loadSettings, setListening, clearTranscript } = useAppStore();
+  const { settings, interview, transcription, startInterview, stopInterview, setTranscription, addDetectedQuestion, addTranscriptEntry, setResponses, setIsGenerating, setResponseError, toggleSettingsPanel, loadSettings, setListening, clearTranscript, ui } = useAppStore();
   const [isInitialized, setIsInitialized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -21,17 +21,10 @@ function App() {
   const accumulatedTranscript = useRef('');
   const isPanelOpen = interview.isActive || transcription.isListening;
 
+  const [showSettings, setShowSettings] = useState(false);
+
   useEffect(() => {
-    if (!window.electronAPI) return;
-    window.electronAPI.resizeWindow(WIDGET_W, isPanelOpen ? EXPANDED_H : WIDGET_H);
-  }, [isPanelOpen]);
-
-  const setInteractable = (interactable) => {
-    if (window.electronAPI) window.electronAPI.setIgnoreMouseEvents(!interactable, { forward: true });
-  };
-
-  useEffect(() => { 
-    loadSettings(); 
+    loadSettings();
     if (window.electronAPI) {
       window.electronAPI.onStealthModeChanged((isStealth) => {
         useAppStore.getState().setStealthMode(isStealth);
@@ -154,9 +147,9 @@ function App() {
         </div>
       )}
 
-      {useAppStore.getState().ui.isSettingsOpen && (
-        <div style={{ pointerEvents: 'auto' }} className="fixed inset-0" onMouseEnter={() => setInteractable(true)} onMouseLeave={() => setInteractable(false)}>
-          <SettingsPanel onClose={toggleSettingsPanel} />
+      {showSettings && (
+        <div style={{ pointerEvents: 'auto' }} className="fixed inset-0 z-50" onMouseEnter={() => setInteractable(true)} onMouseLeave={() => setInteractable(false)}>
+          <SettingsPanel onClose={() => setShowSettings(false)} />
         </div>
       )}
     </div>
